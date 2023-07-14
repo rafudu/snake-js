@@ -23,6 +23,14 @@ export class SnakeGame {
     this.direction = direction;
   }
 
+  private blockInputs = () => {
+    this.acceptInput = false;
+  };
+
+  private allowInputs = () => {
+    this.acceptInput = true;
+  };
+
   private getNonSnakePoint = (): Point => {
     const point = this.screen.randomPoint();
     return this.snake.hasPoint(point) ? this.getNonSnakePoint() : point;
@@ -59,14 +67,16 @@ export class SnakeGame {
     switch (this.direction) {
       case DIRECTIONS.LEFT:
       case DIRECTIONS.RIGHT:
-        return [DIRECTIONS.UP, DIRECTIONS.DOWN].some((direction) =>
-          Vector.AreEqual(direction, newDirection)
+        return (
+          Vector.AreEqual(newDirection, DIRECTIONS.UP) ||
+          Vector.AreEqual(newDirection, DIRECTIONS.DOWN)
         );
 
       case DIRECTIONS.UP:
       case DIRECTIONS.DOWN:
-        return [DIRECTIONS.LEFT, DIRECTIONS.RIGHT].some((direction) =>
-          Vector.AreEqual(direction, newDirection)
+        return (
+          Vector.AreEqual(newDirection, DIRECTIONS.LEFT) ||
+          Vector.AreEqual(newDirection, DIRECTIONS.RIGHT)
         );
     }
   };
@@ -77,7 +87,7 @@ export class SnakeGame {
     }
     if (this.isDirectionAllowed(direction)) {
       this.direction = direction;
-      this.acceptInput = false;
+      this.blockInputs(); // We need to wait for this input to be processed before acceepting a new one
     }
   };
 
@@ -91,8 +101,8 @@ export class SnakeGame {
     } else {
       this.snake.$move(this.direction, this.screen.fitWithinBorders);
     }
-    this.acceptInput = true;
 
+    this.allowInputs(); // we processed the last input, we can accept a new one
     this.screen.drawSnake(this.snake);
     this.updateFrameCount();
   };
