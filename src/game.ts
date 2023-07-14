@@ -56,33 +56,41 @@ class SnakeGame {
     this.snake.$grow(this.direction, this.screen.fitWithinBorders);
     this.generateFruit();
   };
+
+  private isDirectionAllowed = (newDirection: Vector) => {
+    switch (this.direction) {
+      case DIRECTIONS.LEFT:
+      case DIRECTIONS.RIGHT:
+        return [DIRECTIONS.UP, DIRECTIONS.DOWN].some((direction) =>
+          Vector.AreEqual(direction, newDirection)
+        );
+
+      case DIRECTIONS.UP:
+      case DIRECTIONS.DOWN:
+        return [DIRECTIONS.LEFT, DIRECTIONS.RIGHT].some((direction) =>
+          Vector.AreEqual(direction, newDirection)
+        );
+    }
+  };
   setDirection = (direction: Vector) => {
-    this.direction = direction;
+    if (this.isDirectionAllowed(direction)) {
+      this.direction = direction;
+    }
   };
 
   tick = () => {
-    // let grow = false;
-    // grow = this.frameCount % 15 === 0 && this.snake.size < 10;
-
     this.screen.clear();
     this.generateFruit();
     this.willEatFruit()
       ? this.eatFruitAndGrow()
       : this.snake.$move(this.direction, this.screen.fitWithinBorders);
-    // grow
-    //   ? this.snake.$grow(this.direction, this.screen.fitWithinBorders)
-    //   : this.snake.$move(this.direction, this.screen.fitWithinBorders);
 
     this.screen.drawSnake(this.snake);
     this.updateFrameCount();
-    if (this.frameCount % 5 === 0) {
-      this.setDirection(getRandomDirection(this.direction));
-    }
   };
 }
 export function game(canvas: HTMLCanvasElement) {
   let direction = DIRECTIONS.RIGHT;
-
   canvas.width = DIMENSIONS.WIDTH * scaleFactor;
   canvas.height = DIMENSIONS.HEIGHT * scaleFactor;
 
@@ -96,23 +104,45 @@ export function game(canvas: HTMLCanvasElement) {
   const game = new SnakeGame(snake, screen, direction);
   game.tick();
   setInterval(game.tick, 1000 / DIFFICULTY.HARDEST);
+
+  window.addEventListener("keydown", (e) => {
+    let direction;
+    switch (e.code) {
+      case "KeyW":
+      case "ArrowUp":
+        direction = DIRECTIONS.UP;
+        break;
+
+      case "KeyA":
+      case "ArrowLeft":
+        direction = DIRECTIONS.LEFT;
+        break;
+      case "KeyS":
+      case "ArrowDown":
+        direction = DIRECTIONS.DOWN;
+        break;
+      case "KeyD":
+      case "ArrowRight":
+        direction = DIRECTIONS.RIGHT;
+        break;
+    }
+
+    direction && game.setDirection(direction);
+  });
 }
 
-const getRandomDirection = (direction: Vector) => {
-  const getRandomValue = (arr: any[]) => {
-    return arr.sort(() => (Math.random() < 0.5 ? -1 : 1))[0];
-  };
+// const getRandomDirection = (direction: Vector) => {
+//   const getRandomValue = (arr: any[]) => {
+//     return arr.sort(() => (Math.random() < 0.5 ? -1 : 1))[0];
+//   };
 
-  switch (direction) {
-    case DIRECTIONS.LEFT:
-    case DIRECTIONS.RIGHT:
-      return getRandomValue([DIRECTIONS.UP, DIRECTIONS.DOWN]);
+//   switch (direction) {
+//     case DIRECTIONS.LEFT:
+//     case DIRECTIONS.RIGHT:
+//       return getRandomValue([DIRECTIONS.UP, DIRECTIONS.DOWN]);
 
-    case DIRECTIONS.UP:
-    case DIRECTIONS.DOWN:
-      return getRandomValue([DIRECTIONS.LEFT, DIRECTIONS.RIGHT]);
-  }
-};
-
-const randomPixel = (width: number, height: number) =>
-  [width - 1, height - 1].map((v) => Math.round(Math.random() * v));
+//     case DIRECTIONS.UP:
+//     case DIRECTIONS.DOWN:
+//       return getRandomValue([DIRECTIONS.LEFT, DIRECTIONS.RIGHT]);
+//   }
+// };
