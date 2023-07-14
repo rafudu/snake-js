@@ -29,7 +29,6 @@ export class SnakeGame {
   };
 
   private generateFruit = () => {
-    // this.fruit ||= this.screen.randomPoint();
     this.fruit ||= this.getNonSnakePoint();
 
     this.screen.drawFruit(this.fruit);
@@ -88,7 +87,7 @@ export class SnakeGame {
     if (this.willEatFruit()) {
       this.eatFruitAndGrow();
     } else if (this.willHitSnake()) {
-      // console.log("DEAD");
+      // you died
     } else {
       this.snake.$move(this.direction, this.screen.fitWithinBorders);
     }
