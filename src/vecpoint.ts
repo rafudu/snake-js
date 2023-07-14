@@ -6,7 +6,7 @@ export class Point {
     return pointA.x === pointB.x && pointA.y === pointB.y;
   }
 
-  static Add(point: Point, vector: Vector) {
+  static ApplyVector(point: Point, vector: Vector) {
     return new Point(point.x + vector.x, point.y + vector.y);
   }
 

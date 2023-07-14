@@ -41,12 +41,12 @@ export class SnakeGame {
   };
 
   private willEatFruit = () => {
-    const nextPosition = Point.Add(this.snake.position, this.direction);
+    const nextPosition = Point.ApplyVector(this.snake.position, this.direction);
     return Point.AreEqual(nextPosition, this.fruit!);
   };
 
   private willHitSnake = () => {
-    const nextPosition = Point.Add(this.snake.position, this.direction);
+    const nextPosition = Point.ApplyVector(this.snake.position, this.direction);
     return this.snake.hasPoint(nextPosition);
   };
 

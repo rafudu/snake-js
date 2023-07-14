@@ -26,14 +26,14 @@ export class Snake {
     return this.pieces.length;
   }
   $grow = (direction: Vector, fitToScreen = (p: Point) => p) => {
-    let nextPosition = fitToScreen(Point.Add(this.position, direction));
+    let nextPosition = fitToScreen(Point.ApplyVector(this.position, direction));
     // to grow we just add a new piece to the front and update
     this.pieces = [nextPosition, ...this.pieces];
     return this;
   };
 
   $move = (direction: Vector, fitToScreen = (p: Point) => p) => {
-    let nextPiece = Point.Add(this.position, direction);
+    let nextPiece = Point.ApplyVector(this.position, direction);
     nextPiece = fitToScreen(nextPiece);
     // to move we just remove the last piece and add the new piece in the front.
     this.pieces = [nextPiece, ...this.removeLastPiece(this.pieces)];
