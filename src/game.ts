@@ -15,7 +15,8 @@ export class SnakeGame {
   direction: Vector;
   private fruit?: Point;
   private frameCount: number = 0;
-  private acceptInput: boolean = false;
+
+  private nextDirection?: Vector;
 
   constructor(snake: Snake, screen: Screen, direction = DIRECTIONS.RIGHT) {
     this.snake = snake;
@@ -23,20 +24,12 @@ export class SnakeGame {
     this.direction = direction;
   }
 
-  private blockInputs = () => {
-    this.acceptInput = false;
-  };
-
-  private allowInputs = () => {
-    this.acceptInput = true;
-  };
-
   private getNonSnakePoint = (): Point => {
     const point = this.screen.randomPoint();
     return this.snake.hasPoint(point) ? this.getNonSnakePoint() : point;
   };
 
-  private generateFruit = () => {
+  private drawFruit = () => {
     this.fruit ||= this.getNonSnakePoint();
 
     this.screen.drawFruit(this.fruit);
@@ -57,10 +50,9 @@ export class SnakeGame {
     return this.snake.hasPoint(nextPosition);
   };
 
-  private eatFruitAndGrow = () => {
+  private eatFruit = () => {
     this.fruit = undefined;
-    this.snake.$grow(this.direction, this.screen.fitWithinBorders);
-    this.generateFruit();
+    this.drawFruit();
   };
 
   private isDirectionAllowed = (newDirection: Vector) => {
@@ -81,28 +73,42 @@ export class SnakeGame {
     }
   };
 
-  setDirection = (direction: Vector) => {
-    if (!this.acceptInput) {
-      return;
+  setDirection = (newDirection: Vector) => {
+    // we just store the value of the next direction.
+    // this value is effectively changed on the game tick.
+    // reason is: with fast enough inputs you can change the direction several times before the game is drawn and perform an illegal move.
+    // example:
+    // you are moving RIGHT.
+    // Then you press UP and LEFT.
+    // Now next direction is LEFT, which would be illegal.
+    if (this.isDirectionAllowed(newDirection)) {
+      this.nextDirection = newDirection;
     }
-    if (this.isDirectionAllowed(direction)) {
-      this.direction = direction;
-      this.blockInputs(); // We need to wait for this input to be processed before acceepting a new one
+  };
+
+  private commitDirectionChange = () => {
+    if (!this.nextDirection) return;
+
+    if (this.isDirectionAllowed(this.nextDirection)) {
+      this.direction = this.nextDirection;
+      this.nextDirection = undefined;
     }
   };
 
   tick = () => {
     this.screen.clear();
-    this.generateFruit();
+    this.commitDirectionChange();
+    this.drawFruit();
+
     if (this.willEatFruit()) {
-      this.eatFruitAndGrow();
+      this.eatFruit();
+      this.snake.$grow(this.direction, this.screen.fitWithinBorders);
     } else if (this.willHitSnake()) {
       // you died
     } else {
       this.snake.$move(this.direction, this.screen.fitWithinBorders);
     }
 
-    this.allowInputs(); // we processed the last input, we can accept a new one
     this.screen.drawSnake(this.snake);
     this.updateFrameCount();
   };
