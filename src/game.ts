@@ -7,7 +7,7 @@ export const DIRECTIONS = {
   LEFT: new Vector(-1, 0),
   UP: new Vector(0, -1),
   DOWN: new Vector(0, 1),
-};
+} as const;
 
 export class SnakeGame {
   snake: Snake;

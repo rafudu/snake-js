@@ -2,7 +2,7 @@ import { Screen } from "./screen";
 import { Snake } from "./snake";
 import { DIRECTIONS, SnakeGame } from "./game";
 
-const scaleFactor = 9;
+const scaleFactor = 15;
 
 enum DIFFICULTY {
   EASIEST = 1,
@@ -18,10 +18,7 @@ export const DIMENSIONS = {
 } as const;
 
 export function game(canvas: HTMLCanvasElement) {
-  canvas.width = DIMENSIONS.WIDTH * scaleFactor;
-  canvas.height = DIMENSIONS.HEIGHT * scaleFactor;
-
-  const snake = new Snake(2, 0);
+  const snake = new Snake(0, 0);
   const screen = new Screen(canvas, {
     width: DIMENSIONS.WIDTH,
     height: DIMENSIONS.HEIGHT,

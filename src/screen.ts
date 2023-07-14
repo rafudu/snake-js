@@ -25,6 +25,8 @@ export class Screen {
     this.width = width;
     this.height = height;
     this.scaleFactor = scaleFactor;
+    canvas.width = width * scaleFactor;
+    canvas.height = height * scaleFactor;
   }
 
   private toPixel = (num: number = 1) => num * this.scaleFactor;
