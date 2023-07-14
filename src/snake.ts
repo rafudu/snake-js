@@ -17,6 +17,9 @@ export class Snake {
   private removeLastPiece = (pieces: Point[]) =>
     pieces.slice(0, pieces.length - 1);
 
+  hasPoint = (p: Point) =>
+    this.pieces.some((piece) => Point.AreEqual(piece, p));
+
   get size() {
     return this.pieces.length;
   }
@@ -24,8 +27,10 @@ export class Snake {
     let nextPosition = fitToScreen(Point.Add(this.position, direction));
     this.position = nextPosition;
     this.pieces = [nextPosition, ...this.pieces];
+
     return this;
   };
+
   $move = (direction: Vector, fitToScreen = (p: Point) => p) => {
     let nextPiece = Point.Add(this.position, direction);
     nextPiece = fitToScreen(nextPiece);

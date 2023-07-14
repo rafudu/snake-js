@@ -43,8 +43,8 @@ export class Screen {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   };
 
-  drawSquare = (p: Point) => {
-    this.ctx.fillStyle = "green";
+  drawSquare = (p: Point, fillStyle?: string) => {
+    this.ctx.fillStyle = fillStyle || "green";
     const width = this.toPixel(1);
     const height = this.toPixel(1);
     this.ctx.fillRect(this.toPixel(p.x), this.toPixel(p.y), width, height);
@@ -66,8 +66,8 @@ export class Screen {
   };
 
   drawSnake = (snake: Snake) => {
-    snake.pieces.forEach((piece) => {
-      this.drawSquare(piece);
+    snake.pieces.forEach((piece, i) => {
+      this.drawSquare(piece, i === 0 ? "blue" : "");
     });
     return snake;
   };
